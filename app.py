@@ -9,7 +9,7 @@ api_key = st.secrets["api_key"] if "api_key" in st.secrets else ""
 
 # User input fallback
 if not api_key:
-    api_key = st.text_input("🔑 Masukkan API Key kamu", type="Normal")
+    api_key = st.text_input("🔑 Masukkan API Key kamu", type="default")
 
 # Pilihan voice multibahasa resmi dari ElevenLabs
 multilang_voices = {
