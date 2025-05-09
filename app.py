@@ -6,7 +6,7 @@ st.title("MASUKIN ANJENG API KEY SAMA CUSTOM IDNYA CUK")
 
 st.markdown("Masukkan API Key dan Voice ID dari akun ElevenLabs kamu.")
 
-api_key = st.text_input("🔑 API Key", type="password")
+api_key = st.text_input("🔑 API Key")
 voice_id = st.text_input("🧬 Voice ID")
 text = st.text_area("📜 Masukkan Teks", height=200)
 
