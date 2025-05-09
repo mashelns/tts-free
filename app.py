@@ -20,7 +20,7 @@ voices = {
     "Antoni (EN/ES)": "ErXwobaYiN019PkySvjV",
     "Elli (EN/DE)": "MF3mGyEYCl7XYWbV9V6O",
     "Dorothy (Multilingual)": "ThT5KcBeYPX3keUQqHPh",
-    "Josh (Multilingual)": "TxGEqnHWrfWFTfGW9XjX"
+    "DanDan": "9F4C8ztpNUmXkdDDbz3J"
 }
 
 voice_name = st.selectbox("🧬 Pilih Voice Multibahasa", list(voices.keys()))
