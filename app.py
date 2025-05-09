@@ -1,23 +1,39 @@
 import streamlit as st
 import requests
 import time
+import os
+from dotenv import load_dotenv
 
-# =================== PAGE CONFIG ====================
+# Load .env jika ada
+load_dotenv()
+
+# =================== CONFIG ====================
 st.set_page_config(page_title="🗣️ ElevenLabs TTS Multibahasa", layout="centered")
 
-# =================== HEADER ====================
 st.markdown("""
     <h1 style='text-align: center; color: #1f77b4;'>🎙️ ElevenLabs TTS Multibahasa</h1>
-    <p style='text-align: center; font-size: 16px;'>Ketik teks dalam bahasa apa pun dan unduh hasil suaranya!</p>
+    <p style='text-align: center; font-size: 16px;'>Tulis teks dalam bahasa apa pun dan konversi ke suara!</p>
 """, unsafe_allow_html=True)
 
 st.markdown("---")
 
 # =================== API KEY ====================
-api_key = st.secrets["api_key"] if "api_key" in st.secrets else ""
+stored_api_key = os.getenv("ELEVEN_API_KEY")
+api_key = ""
 
-if not api_key:
-    api_key = st.text_input("🔑 Masukkan API Key ElevenLabs kamu:", type="normal")
+if stored_api_key:
+    st.success("✅ API Key sudah disimpan.")
+    api_key = stored_api_key
+else:
+    api_key = st.text_input("🔑 Masukkan API Key ElevenLabs kamu:", type="password")
+    if st.button("💾 Simpan API Key"):
+        if api_key:
+            with open(".env", "w") as f:
+                f.write(f"ELEVEN_API_KEY={api_key}")
+            st.success("API Key berhasil disimpan. Silakan refresh halaman.")
+            st.stop()
+        else:
+            st.warning("API Key tidak boleh kosong.")
 
 st.markdown("---")
 
