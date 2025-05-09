@@ -2,22 +2,20 @@ import streamlit as st
 import requests
 
 st.set_page_config(page_title="ElevenLabs Multilingual TTS", layout="centered")
-st.title("🗣️ ElevenLabs Multilingual TTS")
+st.title("Kalau Yang Mau Custom Voice ID bisa Ngomong AJa biar tak tambahin")
 
 # Load API key
 api_key = st.secrets["api_key"] if "api_key" in st.secrets else ""
 
 # User input fallback
 if not api_key:
-    api_key = st.text_input("🔑 Masukkan API Key kamu", type="password")
+    api_key = st.text_input("🔑 Masukkan API Key kamu", type="Normal")
 
 # Pilihan voice multibahasa resmi dari ElevenLabs
 multilang_voices = {
-    "Rachel (EN/ES/FR)": "21m00Tcm4TlvDq8ikWAM",
-    "Antoni (EN/ES)": "ErXwobaYiN019PkySvjV",
-    "Elli (EN/DE)": "MF3mGyEYCl7XYWbV9V6O",
-    "Dorothy (Multilang)": "ThT5KcBeYPX3keUQqHPh",
-    "Josh (Multilang)": "9F4C8ztpNUmXkdDDbz3J",
+    "Dandan (Multilang)": "9F4C8ztpNUmXkdDDbz3J",
+    "Alex (Multilang)": "yl2ZDV1MzN4HbQJbMihG",
+    "Nick(Multilang)": "WrPknjKhmIXkCONEtG3j",
 }
 
 voice_label = st.selectbox("🧬 Pilih Voice Multibahasa", list(multilang_voices.keys()))
