@@ -2,77 +2,61 @@ import streamlit as st
 import requests
 import time
 import os
-from dotenv import load_dotenv
+from dotenv import load_dotenv, set_key
 
-# Load API key dari .env
-load_dotenv()
+ENV_PATH = ".env"
+load_dotenv(ENV_PATH)
 
 # =================== PAGE CONFIG ====================
-st.set_page_config(page_title="🗣️ ElevenLabs Multilingual TTS", layout="centered")
-st.markdown("""
-    <h1 style='text-align: center; color: #1f77b4;'>🎙️ ElevenLabs TTS Multibahasa</h1>
-    <p style='text-align: center; font-size: 16px;'>Masukkan teks dalam bahasa apa pun & hasilkan suara AI 🎧</p>
-""", unsafe_allow_html=True)
-st.markdown("---")
+st.set_page_config(page_title="ElevenLabs TTS Multilang", layout="centered")
+
+st.title("🎙️ ElevenLabs Multilingual TTS")
 
 # =================== API KEY ====================
-stored_api_key = os.getenv("ELEVEN_API_KEY")
-api_key = stored_api_key if stored_api_key else ""
+api_key = os.getenv("ELEVEN_API_KEY", "")
+input_api = st.text_input("🔑 API Key ElevenLabs:", value=api_key, type="password")
 
-if stored_api_key:
-    st.success("✅ API Key sudah disimpan.")
-    if st.button("❌ Hapus API Key"):
-        with open(".env", "w") as f:
-            f.write("")
-        st.warning("API Key berhasil dihapus. Silakan refresh.")
-        st.stop()
-else:
-    api_key = st.text_input("🔑 Masukkan API Key ElevenLabs kamu:", type="password")
-    if st.button("💾 Simpan API Key"):
-        if api_key:
-            with open(".env", "w") as f:
-                f.write(f"ELEVEN_API_KEY={api_key}")
-            st.success("API Key berhasil disimpan! Silakan refresh halaman.")
-            st.stop()
-        else:
-            st.warning("API Key tidak boleh kosong.")
+col1, col2, col3 = st.columns([1, 1, 2])
+with col1:
+    if st.button("💾 Simpan"):
+        set_key(ENV_PATH, "ELEVEN_API_KEY", input_api)
+        st.success("API Key disimpan.")
+with col2:
+    if st.button("❌ Hapus"):
+        set_key(ENV_PATH, "ELEVEN_API_KEY", "")
+        st.warning("API Key dihapus.")
 
-st.markdown("---")
+st.divider()
 
-# =================== VOICE OPTIONS ====================
-st.subheader("🎤 Pilih Suara")
-
+# =================== VOICE ID ====================
 multilang_voices = {
     "🌍 Dandan (Multilang)": "9F4C8ztpNUmXkdDDbz3J",
     "🧑‍💼 Alex (Multilang)": "yl2ZDV1MzN4HbQJbMihG",
     "🎧 Nick (Multilang)": "WrPknjKhmIXkCONEtG3j",
-    "➕ Masukkan Voice ID Sendiri": "custom"
+    "🛠️ Gunakan Custom Voice ID": "custom"
 }
 
-voice_label = st.selectbox("Pilih voice:", list(multilang_voices.keys()))
+voice_choice = st.selectbox("🎤 Pilih Suara:", list(multilang_voices.keys()))
 voice_id = ""
 
-if multilang_voices[voice_label] == "custom":
-    custom_voice = st.text_input("🛠️ Masukkan Custom Voice ID:")
-    voice_id = custom_voice.strip()
+if multilang_voices[voice_choice] == "custom":
+    voice_id = st.text_input("🔧 Masukkan Custom Voice ID:")
 else:
-    voice_id = multilang_voices[voice_label]
+    voice_id = multilang_voices[voice_choice]
 
-# =================== TEXT INPUT ====================
-text = st.text_area("📝 Masukkan Teks:", height=200, placeholder="Tulis teks dalam bahasa apa pun...")
+st.divider()
 
-st.markdown("---")
+# =================== TEXT TO SPEECH ====================
+text = st.text_area("📝 Teks (boleh multibahasa):", height=200)
 
-# =================== BUTTON & REQUEST ====================
-if st.button("🚀 Konversi ke Suara", use_container_width=True):
-    if not api_key or not text.strip() or not voice_id:
-        st.error("❗ Lengkapi API Key, teks, dan Voice ID.")
+if st.button("🚀 Konversi"):
+    if not input_api.strip() or not voice_id.strip() or not text.strip():
+        st.error("❗ Mohon isi semua field: API Key, Teks, dan Voice ID.")
     else:
         headers = {
-            "xi-api-key": api_key,
+            "xi-api-key": input_api.strip(),
             "Content-Type": "application/json"
         }
-
         payload = {
             "text": text,
             "model_id": "eleven_multilingual_v2",
@@ -81,27 +65,21 @@ if st.button("🚀 Konversi ke Suara", use_container_width=True):
                 "similarity_boost": 0.75
             }
         }
-
         url = f"https://api.elevenlabs.io/v1/text-to-speech/{voice_id}"
 
-        with st.spinner("🎛️ Menghasilkan audio..."):
+        with st.spinner("🎧 Mengonversi..."):
             response = requests.post(url, json=payload, headers=headers)
 
         if response.status_code == 200:
             audio_data = response.content
             filename = f"TTSBOIMKA_{int(time.time())}.mp3"
-
             st.audio(audio_data, format="audio/mp3")
             st.download_button(
-                label="⬇️ Download Hasil Suara (.mp3)",
+                label="⬇️ Download MP3",
                 data=audio_data,
                 file_name=filename,
-                mime="audio/mpeg",
-                use_container_width=True
+                mime="audio/mpeg"
             )
-            st.success("✅ Audio berhasil dibuat!")
+            st.success("✅ Audio berhasil dibuat.")
         else:
-            st.error(f"❌ Gagal: {response.status_code}\n{response.text}")
-
-st.markdown("---")
-st.info("ℹ️ Tips: Kamu bisa ambil Voice ID dari dashboard ElevenLabs.")
+            st.error(f"❌ Error {response.status_code}: {response.text}")
