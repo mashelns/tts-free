@@ -17,7 +17,7 @@ st.markdown("---")
 api_key = st.secrets["api_key"] if "api_key" in st.secrets else ""
 
 if not api_key:
-    api_key = st.text_input("🔑 Masukkan API Key ElevenLabs kamu:", type="password")
+    api_key = st.text_input("🔑 Masukkan API Key ElevenLabs kamu:", type="normal")
 
 st.markdown("---")
 
