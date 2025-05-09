@@ -8,13 +8,13 @@ ENV_PATH = ".env"
 load_dotenv(ENV_PATH)
 
 # =================== PAGE CONFIG ====================
-st.set_page_config(page_title="ElevenLabs TTS Multilang", layout="centered")
+st.set_page_config(page_title="Lu CUma Butuh APIKEY dan INI MAXIMAL TANPA BATAS 5000KARAKTER NJIR", layout="centered")
 
 st.title("🎙️ ElevenLabs Multilingual TTS")
 
 # =================== API KEY ====================
 api_key = os.getenv("ELEVEN_API_KEY", "")
-input_api = st.text_input("🔑 API Key ElevenLabs:", value=api_key, type="password")
+input_api = st.text_input("🔑 API Key ElevenLabs:", value=api_key, type="default")
 
 col1, col2, col3 = st.columns([1, 1, 2])
 with col1:
